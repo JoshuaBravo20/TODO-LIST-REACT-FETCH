@@ -18,6 +18,10 @@ const MainContainer = () => {
     setTaskList([...taskList]);
   }
 
+  function deleteEveryone (){
+    setTaskList([]);
+  }
+
   let emptyLiRef = useRef(null);
 
   return (
@@ -64,6 +68,9 @@ const MainContainer = () => {
       <div id="counter" className="animate__animated animate__bounceInUp">
         {taskList.length} tasks pending
       </div>
+      <button id="deleteAll" className="btn-danger btn btn-lg animate__animated animate__bounceInUp" onClick={deleteEveryone}>
+        <i class="fas fa-dumpster"></i>
+      </button>
     </>
   );
 };

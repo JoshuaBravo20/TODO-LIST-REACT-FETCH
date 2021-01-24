@@ -5,8 +5,7 @@ const Header = () => {
     <>
       <div className="header animate__animated animate__bounceInDown animate__fast">
         <p id="heading">
-           To-Do List
-           
+          To-Do List
           <i
             className="fas fa-sticky-note animate__animated animate__bounceInDown"
             id="sticky"
