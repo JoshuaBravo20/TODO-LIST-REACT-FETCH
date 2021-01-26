@@ -1,25 +1,122 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 const MainContainer = () => {
+  //Definición de Variables
+
   let formRef = useRef(null);
-
   const [taskList, setTaskList] = useState([]);
+  const [arrayObj, setArrayObj] = useState([]);
+  const [urlApi] = useState(
+    "https://assets.breatheco.de/apis/fake/todos/user/joshuabravofinal2"
+  );
 
+  //<------------->
+
+  //Funcion para traer las tareas
+  function getTasks(url) {
+    fetch(url)
+      .then((resp) => resp.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error(error));
+  }
+
+  //Cargar al princpio de la página
+
+  useEffect(() => {
+    getTasks(urlApi);
+  }, []);
+
+  //<------------->
+
+  //Function para POST new LIST
+  function newPost(url) {
+    fetch(url, {
+      method: "POST",
+      body: JSON.stringify([]),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((resp) => {
+        return resp.json();
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  //<------------->
+
+  //Funcion para ACTUALIZAR / PUT
+  function updatePut(url, task) {
+    fetch(url, {
+      method: "PUT",
+      body: JSON.stringify(task),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((resp) => {
+        return resp.json();
+      })
+      .then((data) => {
+        console.log(data.result);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+  //<------------->
+
+  //Funcion de agregar nuevas tareas
   function addNewTask(e) {
     if (e.keyCode === 13 && formRef.value !== "") {
       setTaskList(taskList.concat(formRef.value));
       emptyLiRef.current.className = "hiding";
+      let newT = [...arrayObj, { label: formRef.value, done: false }];
+      setArrayObj(newT);
+      updatePut(urlApi, newT);
       formRef.value = "";
+      console.log(arrayObj);
     }
   }
 
+  //<------------->
+
+  //BORRAR TODO / METODO DELETE
+  function deleteFullPost() {
+    fetch(urlApi, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((resp) => resp.json())
+      .then((data) => console.log(data.result))
+      .catch((error) => console.error(error));
+  }
+
+  //<------------->
+
+  //BORRAR INDIVIDUAL
   function deleteTask(i) {
     taskList.splice(i, 1);
     setTaskList([...taskList]);
+    arrayObj.splice(i, 1);
+    let newt = [...arrayObj];
+    setArrayObj(newt);
+    updatePut(urlApi, newt);
   }
 
-  function deleteEveryone (){
+  //BORRAR TODO DE NUEVO
+  function deleteEveryone() {
     setTaskList([]);
+    setArrayObj([]);
+    deleteFullPost();
   }
 
   let emptyLiRef = useRef(null);
@@ -68,8 +165,21 @@ const MainContainer = () => {
       <div id="counter" className="animate__animated animate__bounceInUp">
         {taskList.length} tasks pending
       </div>
-      <button id="deleteAll" className="btn-danger btn btn-lg animate__animated animate__bounceInUp" onClick={deleteEveryone}>
+      <button
+        id="deleteAll"
+        className="btn-danger btn btn-lg animate__animated animate__bounceInUp"
+        onClick={deleteEveryone}
+      >
         <i class="fas fa-dumpster"></i>
+      </button>
+      <button
+        id="deleteAll"
+        className="btn-danger btn btn-lg animate__animated animate__bounceInUp"
+        onClick={() => {
+          newPost(urlApi);
+        }}
+      >
+        NEW USER
       </button>
     </>
   );
